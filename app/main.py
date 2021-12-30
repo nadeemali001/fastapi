@@ -12,23 +12,27 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import desc
 from . import models, schema, utils
 from .database import engine, get_db
-
+from .routers import post, user, auth
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-while True:
-    try:
-        conn = psycopg2.connect(
-            host='localhost', database='fastapi', user='postgres', password='tiger', cursor_factory=RealDictCursor)
-        cursor = conn.cursor()
-        print('DB connected successfully!!')
-        break
-    except Exception as error:
-        print('Connection failed to DB')
-        print('Error: ', error)
-        time.sleep(10)
+app.include_router(post.router)
+app.include_router(user.router)
+app.include_router(auth.router)
+
+# while True:
+#     try:
+#         conn = psycopg2.connect(
+#             host='localhost', database='fastapi', user='postgres', password='tiger', cursor_factory=RealDictCursor)
+#         cursor = conn.cursor()
+#         print('DB connected successfully!!')
+#         break
+#     except Exception as error:
+#         print('Connection failed to DB')
+#         print('Error: ', error)
+#         time.sleep(10)
 
 
 @app.get('/')

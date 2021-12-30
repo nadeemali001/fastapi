@@ -1,14 +1,16 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from .. import models, schema, utils
+from fastapi import Response, status, HTTPException, Depends, APIRouter
+from .. import models, schema
 from ..database import get_db
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import List
 from sqlalchemy.sql.expression import desc
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/posts'
+)
 
 
-@router.get('/posts', response_model=List[schema.Post])
+@router.get('/', response_model=List[schema.Post])
 def get_posts(db: Session = Depends(get_db)):
     #cursor.execute(''' SELECT * from posts ''')
     #posts = cursor.fetchall()
@@ -16,7 +18,7 @@ def get_posts(db: Session = Depends(get_db)):
     return post
 
 
-@router.post('/posts', status_code=status.HTTP_201_CREATED, response_model=schema.Post)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schema.Post)
 def create_post(post: schema.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute('''INSERT INTO POSTS (title,content,published) VALUES (%s,%s,%s) RETURNING *''',
     #                (post.title, post.content, post.published))
@@ -31,7 +33,7 @@ def create_post(post: schema.PostCreate, db: Session = Depends(get_db)):
     return new_post
 
 
-@router.get('/posts/latest', response_model=schema.Post)
+@router.get('/latest', response_model=schema.Post)
 def get_latest_post(db: Session = Depends(get_db)):
     # cursor.execute(''' SELECT * from posts order by id desc limit 1''')
     # latest_post = cursor.fetchone()
@@ -39,7 +41,7 @@ def get_latest_post(db: Session = Depends(get_db)):
     return latest_post
 
 
-@router.get('/posts/{id}', response_model=schema.Post)
+@router.get('/{id}', response_model=schema.Post)
 def get_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute('''SELECT * from posts where id = %s''', (str(id),))
     # posts = cursor.fetchone()
@@ -50,7 +52,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
     return posts
 
 
-@router.delete('/posts/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute('''SELECT * from posts where id = %s''', (str(id),))
     # posts = cursor.fetchone()
@@ -66,7 +68,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.put('/posts/{id}', response_model=schema.Post)
+@router.put('/{id}', response_model=schema.Post)
 def update_post(id: int, post: schema.PostBase, db: Session = Depends(get_db)):
     # cursor.execute('''SELECT * from posts where id = %s''', (str(id),))
     # posts = cursor.fetchone()
