@@ -1,5 +1,4 @@
 from time import timezone
-from pydantic.errors import IntegerError
 from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import null, text
